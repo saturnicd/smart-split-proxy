@@ -1,0 +1,67 @@
+/* Design tokens — refined light theme shared by the popup and options page.
+   One accent (warm amber) + a semantic teal for "connected/proxy" states. */
+
+:root {
+  color-scheme: light;
+
+  /* Neutral surfaces */
+  --bg0: #f7f7f8;
+  --bg1: #f4f4f6;
+  --bg2: #efeff2;
+  --card: #ffffff;
+  --surface: #fafafa;
+  --surface-2: #f1f1f3;
+  --overlay: #ffffff;
+  --input-bg: #ffffff;
+
+  /* Hairline borders + text */
+  --stroke: rgba(17, 24, 39, 0.09);
+  --stroke-2: rgba(17, 24, 39, 0.18);
+  --text: #16181d;
+  --muted: #6b7280;
+
+  /* Accent — warm amber */
+  --gold: #b26a00;
+  --gold-hi: #d1831a;
+  --gold-soft: rgba(178, 106, 0, 0.1);
+
+  /* Semantic — muted teal */
+  --mint: #0f766e;
+  --teal: #0b5f58;
+  --mint-soft: rgba(15, 118, 110, 0.1);
+
+  --danger: #c0261f;
+  --on-accent: #ffffff;
+
+  --glow-a: transparent;
+  --glow-b: transparent;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 12px rgba(16, 24, 40, 0.06);
+  --ring: rgba(178, 106, 0, 0.28);
+
+  --r-sm: 6px;
+  --r: 8px;
+  --r-lg: 10px;
+
+  --dur-1: 130ms;
+  --dur-2: 170ms;
+  --dur-3: 220ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

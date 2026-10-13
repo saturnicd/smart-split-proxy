@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>تنظیمات مسیریاب هوشمند</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="top">
+        <img src="icons/icon128.png" alt="" />
+        <div>
+          <p class="eyebrow">Smart Split Proxy</p>
+          <h1>تنظیمات مسیریاب هوشمند</h1>
+          <p class="lead">
+            VPN سراسری را خاموش کنید و پروکسی محلی فیلترشکن را اینجا بگذارید.
+            سایت‌های ایرانی مستقیم می‌مانند و بقیه از تونل عبور می‌کنند.
+          </p>
+        </div>
+      </header>
+
+      <form id="form">
+        <section class="card">
+          <div class="card-head">
+            <h2>اتصال</h2>
+            <p>آدرس پروکسی محلی نرم‌افزار فیلترشکن</p>
+          </div>
+          <div class="fields">
+            <label>
+              نوع پروکسی
+              <select id="proxyScheme">
+                <option value="socks5">SOCKS5</option>
+                <option value="socks4">SOCKS4</option>
+                <option value="http">HTTP</option>
+                <option value="https">HTTPS</option>
+              </select>
+            </label>
+            <label>
+              آدرس
+              <input id="proxyHost" type="text" placeholder="127.0.0.1" />
+            </label>
+            <label>
+              پورت
+              <input id="proxyPort" type="number" min="1" max="65535" />
+            </label>
+          </div>
+          <button id="detectBtn" type="button" class="detect">تشخیص خودکار پروکسی</button>
+          <p id="detectNote" class="detect-note"></p>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>قوانین هوشمند</h2>
+            <p>پیش‌فرض‌ها برای سایت‌های ایرانی</p>
+          </div>
+          <label class="toggle">
+            <input id="useIrTld" type="checkbox" />
+            <span class="knob"></span>
+            <span>
+              <strong>همه دامنه‌های .ir مستقیم</strong>
+              <small>بانک‌ها، دولت و بیشتر سایت‌های داخلی</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input id="useDefaultIranSites" type="checkbox" />
+            <span class="knob"></span>
+            <span>
+              <strong>فهرست پیش‌فرض ایرانی</strong>
+              <small>دیجی‌کالا، آپارات، دیوار و مشابه حتی با دامنه .com</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input id="mirrorIranianBrands" type="checkbox" />
+            <span class="knob"></span>
+            <span>
+              <strong>مطابقت دامنهٔ آینه‌ای برندهای ایرانی</strong>
+              <small>اگر برند آشنا با پسوند دیگری باز شود (دیجی‌کالا با .net)، مستقیم بشمار</small>
+            </span>
+          </label>
+          <label class="toggle">
+            <input id="geoIranLookup" type="checkbox" />
+            <span class="knob"></span>
+            <span>
+              <strong>تشخیص با موقعیت سرور (آزمایشی)</strong>
+              <small>سایت‌هایی که IP آن‌ها در ایران است، هنگام گشت‌وگذار مستقیم می‌شوند</small>
+            </span>
+          </label>
+          <p id="geoStatus" class="muted-note"></p>
+          <button id="geoClear" type="button" class="danger-slim">پاک کردن میزبان‌های کشف‌شده</button>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>پایداری اتصال</h2>
+            <p>اگر تونل محلی قطع شود چه اتفاقی بیفتد</p>
+          </div>
+          <label class="toggle">
+            <input id="autoFailover" type="checkbox" />
+            <span class="knob"></span>
+            <span>
+              <strong>جایگزینی خودکار هنگام قطع تونل</strong>
+              <small>هر چند دقیقه اتصال بررسی می‌شود؛ اگر پورت محلی جواب ندهد، پورت فعال دیگری پیدا و به آن سوئیچ می‌شود و خودکار برمی‌گردد</small>
+            </span>
+          </label>
+          <p id="healthStatus" class="muted-note"></p>
+          <button id="healthCheckNow" type="button" class="detect green">بررسی اتصال همین حالا</button>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>یادگیری خودکار</h2>
+            <p>مسیرهایی که در پاپ‌آپ برای هر سایت انتخاب کرده‌ای</p>
+          </div>
+          <p class="muted-note">
+            وقتی برای سایتی در پاپ‌آپ «مستقیم» یا «با پروکسی» را بزنی، آن تصمیم
+            اینجا ذخیره می‌شود و روی همهٔ قوانین خودکار اولویت دارد.
+          </p>
+          <div id="learnedList" class="learned-list"></div>
+          <p id="learnedEmpty" class="muted-note" hidden>
+            هنوز چیزی یاد نگرفته‌ای.
+          </p>
+          <button id="learnedClearAll" type="button" class="danger-slim">پاک کردن همهٔ یادگیری‌ها</button>
+        </section>
+
+        <section class="card lists">
+          <div class="list-box direct">
+            <div class="list-head">
+              <span class="list-badge"></span>
+              <h2>همیشه مستقیم</h2>
+            </div>
+            <p class="list-hint">هر خط یک دامنه — بدون تونل باز می‌شود</p>
+            <textarea id="bypassList" rows="9" placeholder="digikala.com"></textarea>
+          </div>
+          <div class="list-box proxy">
+            <div class="list-head">
+              <span class="list-badge"></span>
+              <h2>همیشه با پروکسی</h2>
+            </div>
+            <p class="list-hint">هر خط یک دامنه — حتی اگر سایت ایرانی باشد از تونل رد می‌شود</p>
+            <textarea id="proxyList" rows="9" placeholder="youtube.com"></textarea>
+          </div>
+        </section>
+
+        <div class="bar">
+          <button type="submit">ذخیره تنظیمات</button>
+          <p id="saved" hidden>ذخیره شد</p>
+        </div>
+      </form>
+    </div>
+    <script src="defaults.js"></script>
+    <script src="shared.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

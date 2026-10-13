@@ -1,0 +1,857 @@
+/* Palette + motion tokens live in theme.css (theme-aware). */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* The popup is an RTL surface, so Chrome renders its vertical scrollbar on the
+   LEFT edge — which reads as an unwanted left margin once the popup is taller
+   than Chrome's max height. Hide the gutter; wheel/trackpad still scrolls. */
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  width: 360px;
+  color: var(--text);
+  font-family: Vazirmatn, "SF Pro Text", Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "ss01";
+  background: var(--bg0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.shell {
+  padding: 16px 16px 14px;
+}
+
+/* Staggered entrance: each top-level block rises in on popup open. */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.shell > * {
+  animation: riseIn var(--dur-3) var(--ease) both;
+}
+
+.shell > *:nth-child(1) { animation-delay: 0ms; }
+.shell > *:nth-child(2) { animation-delay: 40ms; }
+.shell > *:nth-child(3) { animation-delay: 80ms; }
+.shell > *:nth-child(4) { animation-delay: 120ms; }
+.shell > *:nth-child(5) { animation-delay: 160ms; }
+.shell > *:nth-child(6) { animation-delay: 200ms; }
+.shell > *:nth-child(7) { animation-delay: 240ms; }
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand p,
+.hint,
+.site-meta span,
+.mode small,
+.settings {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex: 0 0 auto;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--stroke);
+  cursor: pointer;
+}
+
+.switch span::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  top: 3px;
+  right: 3px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: right 0.18s var(--ease);
+}
+
+.switch input:checked + span {
+  background: var(--mint);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mint) 70%, rgba(0, 0, 0, 0.2));
+}
+
+.switch input:checked + span::after {
+  right: 23px;
+}
+
+.status {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--r);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
+.status.direct {
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px color-mix(in srgb, var(--gold) 22%, transparent);
+}
+
+.status.proxy {
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px color-mix(in srgb, var(--mint) 22%, transparent);
+}
+
+.status.idle {
+  opacity: 0.72;
+}
+
+.status strong,
+.status p {
+  margin: 0;
+}
+
+.status p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--mint) 14%, transparent);
+}
+
+.status.direct .pulse {
+  background: var(--gold);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--gold) 16%, transparent);
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Sliding selection pill shared by the mode grid and the temp-route grid.
+   Anchored to the inline-start edge and translated per active index, so it
+   glides between segments. Colour follows the active segment via [data-active]. */
+.seg {
+  position: relative;
+  --seg-n: 2;
+  --seg-gap: 8px;
+  --seg-i: 0;
+}
+
+.modes.seg {
+  --seg-n: 3;
+}
+
+.modes.seg::before {
+  border-radius: var(--r-sm);
+}
+
+.seg::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: calc((100% - (var(--seg-n) - 1) * var(--seg-gap)) / var(--seg-n));
+  border-radius: var(--r-sm);
+  border: 1px solid var(--stroke);
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(calc(var(--seg-i) * -1 * (100% + var(--seg-gap))));
+  transition: transform var(--dur-2) var(--ease), background var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease), opacity var(--dur-2) var(--ease);
+}
+
+.seg[data-active="smart"]::before,
+.seg[data-active="proxy"]::before {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--mint) 32%, var(--stroke));
+  background: color-mix(in srgb, var(--mint) 6%, #ffffff);
+}
+
+.seg[data-active="direct"]::before {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--gold) 34%, var(--stroke));
+  background: color-mix(in srgb, var(--gold) 7%, #ffffff);
+}
+
+.mode,
+.route-btn {
+  position: relative;
+  z-index: 1;
+}
+
+.mode {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--r-sm);
+  padding: 10px 6px;
+  cursor: pointer;
+  font: inherit;
+  display: grid;
+  gap: 2px;
+  transition: color var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
+}
+
+.mode:hover {
+  color: var(--text);
+}
+
+.mode:active {
+  transform: scale(0.97);
+}
+
+.mode span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mode.active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text);
+  box-shadow: none;
+}
+
+.site {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: var(--r);
+  background: var(--overlay);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.favicon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+.site-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.site-meta p {
+  margin: 2px 0 0;
+  font-weight: 700;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.chip {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 8px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+.chip.direct {
+  color: var(--gold);
+  background: var(--gold-soft);
+}
+
+.chip.proxy {
+  color: var(--mint);
+  background: var(--mint-soft);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.learned {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--gold) 26%, var(--stroke));
+  border-radius: var(--r-sm);
+  background: var(--gold-soft);
+}
+
+.learned-text {
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.learned button {
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+.learned button:hover {
+  text-decoration: underline;
+}
+
+.geo {
+  margin-top: 12px;
+}
+
+.geo button {
+  width: 100%;
+}
+
+.geo .hint {
+  margin: 8px 0 0;
+}
+
+.health {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: start;
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-sm);
+  background: var(--card);
+  transition: border-color var(--dur-2) var(--ease), background var(--dur-2) var(--ease);
+}
+
+.health .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  color: var(--muted);
+  background: currentColor;
+  transition: color var(--dur-2) var(--ease);
+}
+
+.health .dot.ok {
+  color: var(--mint);
+  animation: dotBreathe 2.4s var(--ease) infinite;
+}
+
+.health .dot.down {
+  color: var(--danger);
+  animation: dotShake var(--dur-3) var(--ease) 1;
+}
+
+.health .dot.warn {
+  color: var(--gold);
+}
+
+.health .dot.checking {
+  color: var(--gold);
+  animation: dotPulse 1.1s var(--ease) infinite;
+}
+
+.health .health-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.health .health-host {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-sm);
+  padding: 2px 6px;
+}
+
+.health .link {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  border: 1px solid color-mix(in srgb, var(--mint) 30%, var(--stroke));
+  border-radius: var(--r-sm);
+  background: var(--mint-soft);
+  color: var(--mint);
+  font: inherit;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 5px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+
+.health .link:hover {
+  background: color-mix(in srgb, var(--mint) 16%, transparent);
+}
+
+.health .link:active {
+  transform: scale(0.96);
+}
+
+.health .link:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@keyframes dotBreathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 20%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 4%, transparent);
+  }
+}
+
+@keyframes dotPulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, currentColor 0%, transparent);
+  }
+}
+
+@keyframes dotShake {
+  20%,
+  60% {
+    transform: translateX(-2px);
+  }
+  40%,
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  z-index: 50;
+  max-width: 300px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #f5f5f6;
+  background: rgba(22, 24, 29, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast.ok {
+  color: color-mix(in srgb, var(--mint) 72%, white);
+  border-color: color-mix(in srgb, var(--mint) 50%, transparent);
+}
+
+.toast.warn {
+  color: color-mix(in srgb, var(--gold) 72%, white);
+  border-color: color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+button.ghost,
+button.solid {
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: 10px 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  transition: filter var(--dur-1) var(--ease), background var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+
+button.ghost {
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow-sm);
+}
+
+button.ghost:hover {
+  background: var(--surface);
+  border-color: var(--stroke-2);
+}
+
+button.solid {
+  color: var(--on-accent);
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold));
+  box-shadow: var(--shadow-sm);
+}
+
+button.solid:hover {
+  filter: brightness(1.05);
+}
+
+button.solid:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.temp {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid var(--stroke);
+}
+
+.temp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.temp-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.temp-info {
+  color: var(--gold);
+  font-size: 12px;
+  cursor: help;
+  line-height: 1;
+}
+
+.temp-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.route-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-sm);
+  padding: 9px 10px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: right;
+  transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+}
+
+.route-btn:active {
+  transform: scale(0.97);
+}
+
+.route-btn svg:first-child {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+
+.route-txt {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.route-txt b {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.route-txt small {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.route-check {
+  width: 16px;
+  height: 16px;
+  margin-inline-start: auto;
+  display: none;
+}
+
+.route-btn:hover {
+  border-color: var(--stroke-2);
+  background: var(--surface);
+}
+
+.route-btn.route-proxy svg:first-child {
+  color: var(--mint);
+}
+
+.route-btn.route-direct svg:first-child {
+  color: var(--gold);
+}
+
+.route-btn.active {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.route-btn.route-proxy.active {
+  background: var(--mint-soft);
+  border-color: color-mix(in srgb, var(--mint) 32%, var(--stroke));
+}
+
+.route-btn.route-proxy.active .route-check,
+.route-btn.route-proxy.active .route-txt b {
+  color: var(--mint);
+}
+
+.route-btn.route-direct.active {
+  background: var(--gold-soft);
+  border-color: color-mix(in srgb, var(--gold) 34%, var(--stroke));
+}
+
+.route-btn.route-direct.active .route-check,
+.route-btn.route-direct.active .route-txt b {
+  color: var(--gold);
+}
+
+.route-btn.active .route-check {
+  display: block;
+}
+
+.override {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  border: 1px solid;
+}
+
+.override.proxy-override {
+  background: color-mix(in srgb, var(--mint) 14%, transparent);
+  border-color: color-mix(in srgb, var(--mint) 34%, transparent);
+}
+
+.override.direct-override {
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+  border-color: color-mix(in srgb, var(--gold) 34%, transparent);
+}
+
+.ov-chip {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  text-transform: none;
+}
+
+.override.proxy-override .ov-chip {
+  color: var(--mint);
+  background: var(--mint-soft);
+}
+
+.override.direct-override .ov-chip {
+  color: var(--gold);
+  background: var(--gold-soft);
+}
+
+.ov-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-weight: 600;
+  direction: ltr;
+  text-align: right;
+}
+
+.ov-count {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+}
+
+.override button {
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: var(--r-sm);
+  padding: 4px 9px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 10.5px;
+  background: transparent;
+}
+
+.override.proxy-override button {
+  color: var(--mint);
+}
+
+.override.direct-override button {
+  color: var(--gold);
+}
+
+.override button:hover {
+  background: var(--surface-2);
+}
+
+.temp-note {
+  margin: 9px 2px 0;
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.detect {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.detect > button {
+  width: 100%;
+}
+
+.detect .hint {
+  margin-top: 6px;
+}
+
+.settings {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  transition: color var(--dur-1) var(--ease);
+}
+
+.settings:hover {
+  color: var(--text);
+}
+
+.hint {
+  white-space: pre-line;
+  line-height: 1.7;
+}
+
+.progress {
+  color: var(--mint);
+  font-weight: 600;
+}

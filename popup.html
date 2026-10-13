@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>مسیریاب هوشمند</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div class="brand">
+          <img class="logo" src="icons/icon48.png" alt="" />
+          <div>
+            <h1>مسیریاب هوشمند</h1>
+            <p>هر سایت، مسیر خودش</p>
+          </div>
+        </div>
+        <label class="switch" title="روشن و خاموش">
+          <input id="enabled" type="checkbox" />
+          <span></span>
+        </label>
+      </header>
+
+      <section class="status" id="statusCard">
+        <span class="pulse" aria-hidden="true"></span>
+        <div>
+          <strong id="statusTitle">در حال بارگذاری</strong>
+          <p id="statusText">تنظیمات خوانده می‌شود...</p>
+        </div>
+      </section>
+
+      <nav class="modes seg" aria-label="حالت مسیریابی">
+        <button class="mode" data-mode="smart">
+          <span>هوشمند</span>
+          <small>ایرانی مستقیم</small>
+        </button>
+        <button class="mode" data-mode="proxy">
+          <span>پروکسی</span>
+          <small>همه سایت‌ها</small>
+        </button>
+        <button class="mode" data-mode="direct">
+          <span>مستقیم</span>
+          <small>بدون تونل</small>
+        </button>
+      </nav>
+
+      <section class="site">
+        <div class="site-head">
+          <img id="favicon" class="favicon" alt="" hidden />
+          <div class="site-meta">
+            <span>سایت فعلی</span>
+            <p id="currentHost">—</p>
+          </div>
+          <span id="routeChip" class="chip">—</span>
+        </div>
+        <p id="siteHint" class="hint"></p>
+        <div id="learnedNote" class="learned" hidden>
+          <span id="learnedText" class="learned-text">یاد گرفته شده.</span>
+          <button id="learnedClear" type="button">از یادگیری حذف کن</button>
+        </div>
+        <div class="temp">
+          <div class="temp-head">
+            <span class="temp-title">مسیر موقتِ همین تب</span>
+            <span class="temp-info" title="بدون تغییر کلی تنظیمات، فقط مسیر همین تب را تا ۱۰ دقیقه یا بسته‌شدن تب عوض می‌کند و خودش برمی‌گردد.">ⓘ</span>
+          </div>
+          <div class="temp-btns seg">
+            <button id="tempProxyBtn" class="route-btn route-proxy" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z"/>
+                <path d="M3 12h18"/>
+                <path d="M12 3a13.5 13.5 0 0 1 0 18 13.5 13.5 0 0 1 0-18Z"/>
+              </svg>
+              <span class="route-txt">
+                <b>از پروکسی</b>
+                <small>فقط این تب</small>
+              </span>
+              <svg class="route-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12.5 10 17l9-10"/>
+              </svg>
+            </button>
+            <button id="tempDirectBtn" class="route-btn route-direct" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2"/>
+                <path d="M12 8v8M8 12h8"/>
+              </svg>
+              <span class="route-txt">
+                <b>مستقیم</b>
+                <small>فقط این تب</small>
+              </span>
+              <svg class="route-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12.5 10 17l9-10"/>
+              </svg>
+            </button>
+          </div>
+          <div id="overrideBar" class="override" hidden>
+            <span id="overrideChip" class="ov-chip">موقت</span>
+            <span id="overrideText" class="ov-text"></span>
+            <span id="overrideCountdown" class="ov-count"></span>
+            <button id="overrideClear" type="button">لغو تغییر موقت</button>
+          </div>
+          <p class="temp-note">
+            بدون تغییر تنظیم کلی؛ مسیر این تب را تا ۱۰ دقیقه یا بسته‌شدن تب عوض می‌کند و خودش برمی‌گردد.
+          </p>
+        </div>
+        <div class="actions">
+          <button id="bypassBtn" class="ghost">
+            بدون پروکسی
+          </button>
+          <button id="proxyBtn" class="solid">
+            با پروکسی
+          </button>
+        </div>
+        <div id="geoBox" class="geo" hidden>
+          <button id="geoBtn" type="button" class="ghost">بررسی ایرانی‌بودن این سایت</button>
+          <p id="geoNote" class="hint"></p>
+        </div>
+      </section>
+
+      <section class="detect">
+        <div class="health">
+          <span id="healthDot" class="dot"></span>
+          <span id="healthText" class="health-text"></span>
+          <span id="healthHost" class="health-host" hidden></span>
+          <button id="healthCheck" type="button" class="link">بررسی الان</button>
+        </div>
+        <button id="detectBtn" class="ghost">تشخیص خودکار پروکسی</button>
+        <p id="detectProgress" class="hint progress" hidden></p>
+        <p id="detectNote" class="hint"></p>
+        <p id="buildTag" class="hint build"></p>
+      </section>
+
+      <a class="settings" href="options.html" target="_blank">تنظیمات اتصال و فهرست سایت‌ها</a>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="defaults.js"></script>
+    <script src="shared.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
