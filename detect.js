@@ -63,11 +63,14 @@ function isValidIp(value) {
  */
 async function readEgressIp(timeoutMs = 3000) {
   const answers = [];
-  for (const endpoint of IP_ENDPOINTS) {
+  let answeredIndex = -1;
+  for (let i = 0; i < IP_ENDPOINTS.length; i++) {
     try {
+      const endpoint = IP_ENDPOINTS[i];
       const value = endpoint.pick(await httpGet(endpoint.url, timeoutMs));
       if (isValidIp(value)) {
         answers.push(value.trim());
+        answeredIndex = i;
         break;
       }
     } catch (_error) {
@@ -77,9 +80,12 @@ async function readEgressIp(timeoutMs = 3000) {
 
   if (!answers.length) return { ok: false, ip: null };
 
-  // Second opinion. If it disagrees we cannot trust the first one.
-  for (const endpoint of IP_ENDPOINTS.slice(answers.length ? 1 : 0)) {
+  // Second opinion from a DIFFERENT service. If it disagrees we cannot trust
+  // the first one. (Confirming against the same endpoint proves nothing.)
+  for (let i = 0; i < IP_ENDPOINTS.length; i++) {
+    if (i === answeredIndex) continue;
     try {
+      const endpoint = IP_ENDPOINTS[i];
       const value = endpoint.pick(await httpGet(endpoint.url, timeoutMs));
       if (isValidIp(value) && value.trim() !== answers[0]) {
         return { ok: false, ip: null, conflict: [answers[0], value.trim()] };

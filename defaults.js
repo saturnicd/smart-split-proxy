@@ -94,7 +94,7 @@ const LOCAL_PROXY_HOSTS = ["127.0.0.1", "localhost", "::1"];
 
 // Bump whenever detection changes. Shown in the popup and logged by the service
 // worker so it is obvious which copy of the code the browser is running.
-const BUILD_TAG = "detect-2026-10-13l";
+const BUILD_TAG = "detect-2026-10-13m";
 
 const DEFAULT_SETTINGS = {
   enabled: true,

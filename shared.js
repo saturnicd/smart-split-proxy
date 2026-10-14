@@ -214,7 +214,16 @@ function needsPac(settings) {
 }
 
 function routeForIgnoringForced(host, settings) {
-  const clone = { ...settings, proxyList: [], learned: [] };
+  // Remove the explicit "forced" relations (proxyList + learned-proxy) but KEEP
+  // learned-direct exceptions. A host can be both forced and learned-direct,
+  // and the learned-direct decision still wins in routeFor; keeping it here
+  // makes needsPac() see the conflict and force the PAC router — the only way
+  // Chromium's fixed_servers+bypassList can express it.
+  const clone = {
+    ...settings,
+    proxyList: [],
+    learned: normalizeLearned(settings.learned).filter((e) => e.route === "direct")
+  };
   return routeFor(host, clone);
 }
 
